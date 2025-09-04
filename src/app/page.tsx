@@ -7,8 +7,17 @@ import { Badge } from './_components/ui/badge';
 import { Avatar, AvatarImage } from './_components/ui/avatar';
 import Image from "next/image";
 import { Card, CardContent } from './_components/ui/card';
+import { getBarbearias } from "../services/barbearia";
+import { useEffect, useState } from 'react';
+import BarbeariaItem from './_components/barbearia.item';
 
 export default function Home() {
+  const [barbearias, setBarbearias] = useState<any[]>([]);
+
+  useEffect(() => {
+    getBarbearias().then(setBarbearias);
+  }, []);
+
   return (
 
     <div>
@@ -54,6 +63,12 @@ export default function Home() {
                 </div>
             </CardContent>
         </Card>
+        <h2 className='mt-6 mb-3 text-xs font-bold uppercase text-gray-400'>Recomendados:</h2>
+        <div className='flex gap-4 overflow-auto [&::-webkit-scrollbar]:hidden mt-6'>
+            {barbearias.map(b => (
+                <BarbeariaItem key={b.idBarbearia} barbearia={b} />
+            ))}
+        </div>
       </div>
     </div>
 
