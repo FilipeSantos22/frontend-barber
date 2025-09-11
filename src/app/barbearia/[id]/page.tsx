@@ -4,8 +4,9 @@ import TelefoneItem from "@/app/_components/telefone-item";
 import { Button } from "@/app/_components/ui/button";
 import { Sheet, SheetTrigger } from "@/app/_components/ui/sheet";
 import { getBarbeariaById, getServicosByBarbeariaId } from "@/services/barbearia";
-import { MapPinIcon, MenuIcon, StarIcon } from "lucide-react";
+import { ChevronLeftIcon, MapPinIcon, MenuIcon, StarIcon } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 type BarbeariaPageProps = {
@@ -37,6 +38,11 @@ const BarbeariaPage = async (props: BarbeariaPageProps) => {
                     fill
                     priority
                 />
+                <Button size="icon" variant="secondary" className="absolute top-4 left-4 ">
+                    <Link href="/">
+                        <ChevronLeftIcon />
+                    </Link>
+                </Button>
 
                 <Sheet>
                     <SheetTrigger asChild>
