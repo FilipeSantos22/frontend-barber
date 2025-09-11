@@ -3,6 +3,7 @@ import { Card, CardContent } from '../_components/ui/card';
 import { Badge } from '../_components/ui/badge';
 import { Button } from './ui/button';
 import { StarIcon } from 'lucide-react';
+import Link from 'next/link';
 
 type Barbearia = {
   idBarbearia: number;
@@ -41,7 +42,9 @@ const BarbeariaItem = ({ barbearia }: BarbeariaItemProps) => {
           {barbearia.telefone && (
             <p className="text-sm text-gray-500">Tel: {barbearia.telefone}</p>
           )}
-          <Button variant="secondary" className='w-full mt-3'>Reservar</Button>
+          <Button variant="secondary" className='w-full mt-3' asChild>
+              <Link href={`/barbearia/${barbearia.idBarbearia}`}>Reservar</Link>
+          </Button>
         </div>
       </CardContent>
     </Card>
