@@ -1,4 +1,5 @@
 import ServicoItem from "@/app/_components/servico-item";
+import TelefoneItem from "@/app/_components/telefone-item";
 import { Button } from "@/app/_components/ui/button";
 import { getBarbeariaById, getServicosByBarbeariaId } from "@/services/barbearia";
 import { ChevronLeftIcon, MapPinIcon, MenuIcon, StarIcon } from "lucide-react";
@@ -49,6 +50,7 @@ const BarbeariaPage = async (props: BarbeariaPageProps) => {
                 </Button>
             </div>
 
+            {/*TÍTULO*/}
             <div className="p-5 border-b border-solid">
                 <h1 className="text-xl font-bold mb-3">{barbearia.nome}</h1>
                 <div className="flex items-center mb-2 gap-2">
@@ -70,7 +72,8 @@ const BarbeariaPage = async (props: BarbeariaPageProps) => {
                 </p>
             </div>
 
-            <div className="p-5 space-y-3">
+            {/*SERVIÇOS*/}
+            <div className="p-5 space-y-3 border-b border-solid ">
                 <h2 className="text-xs font-bold uppercase text-gray-400">Serviços</h2>
                 <div className="space-y-3">
                     {servicosBarbearia?.map((servico: any) => (
@@ -81,6 +84,14 @@ const BarbeariaPage = async (props: BarbeariaPageProps) => {
                         </div>
                     ))}
                 </div>
+            </div>
+
+            {/*CONTATO*/}
+            <div className="p-5 space-y-3">
+                <h2 className="text-xs font-bold uppercase text-gray-400 ">Contato</h2>
+                {barbearia.telefone && (
+                    <TelefoneItem telefone={barbearia.telefone} />
+                )}
             </div>
         </div>
     );

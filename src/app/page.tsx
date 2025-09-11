@@ -64,14 +64,6 @@ export default function Home() {
                 ))}
             </div>
         </div>
-
-        <footer>
-            <Card>   
-                <CardContent className='py-6 px-6'>
-                    <p className='text-sm text-gray-400 '>copyright @ 2025 <span className='font-bold'>App Barber</span></p>   
-                </CardContent>
-            </Card>
-        </footer>
     </div>
 
   );
