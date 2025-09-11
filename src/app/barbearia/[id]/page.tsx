@@ -1,20 +1,22 @@
+import ServicoItem from "@/app/_components/servico-item";
 import { Button } from "@/app/_components/ui/button";
-import { getBarbeariaById } from "@/services/barbearia";
+import { getBarbeariaById, getServicosByBarbeariaId } from "@/services/barbearia";
 import { ChevronLeftIcon, MapPinIcon, MenuIcon, StarIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 type BarbeariaPageProps = {
-  params: {
-    id: string;
-  };
+  params: Promise<{ id: string }>;
 };
 
-const BarbeariaPage = async ({ params }: BarbeariaPageProps) => {
+const BarbeariaPage = async (props: BarbeariaPageProps) => {
+    const awaitedParams = await props.params;
     let barbearia = null;
+    let servicosBarbearia = null;
     try {
-        barbearia = await getBarbeariaById(Number(params.id));
+        barbearia = await getBarbeariaById(Number(awaitedParams.id));
+        servicosBarbearia = await getServicosByBarbeariaId(Number(awaitedParams.id));
     } catch (error) {
         // Se for 404, barbearia permanece null
     }
@@ -30,7 +32,8 @@ const BarbeariaPage = async ({ params }: BarbeariaPageProps) => {
                     className="object-cover"
                     src={barbearia.imagem_url}
                     alt={barbearia.nome}
-                    fill                
+                    fill
+                    priority
                 />
 
                 <Button size="icon" variant="secondary" className="absolute top-4 left-4 bg-white/30 hover:bg-white/50 backdrop-blur-sm" asChild>
@@ -65,6 +68,19 @@ const BarbeariaPage = async ({ params }: BarbeariaPageProps) => {
                 <p className="text-sm text-gray-600 text-justify">
                     {barbearia.descricao || 'Nenhuma descrição disponível.'}
                 </p>
+            </div>
+
+            <div className="p-5 space-y-3">
+                <h2 className="text-xs font-bold uppercase text-gray-400">Serviços</h2>
+                <div className="space-y-3">
+                    {servicosBarbearia?.map((servico: any) => (
+                        <div key={servico.idServico} className="flex justify-between items-center mb-4">
+                            <div>
+                                <ServicoItem servico={servico} />
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
     );

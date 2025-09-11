@@ -14,3 +14,8 @@ export async function getBarbeariaById(id: number) {
     const { data } = await api.get(`/barbearias/${id}`);
     return data;
 }
+
+export async function getServicosByBarbeariaId(id: number) {
+    const { data } = await api.get(`/barbearias/${id}/servicos`);
+    return data;
+}
