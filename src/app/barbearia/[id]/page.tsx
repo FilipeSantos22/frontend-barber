@@ -1,10 +1,11 @@
 import ServicoItem from "@/app/_components/servico-item";
+import SideBar from "@/app/_components/sidebar";
 import TelefoneItem from "@/app/_components/telefone-item";
 import { Button } from "@/app/_components/ui/button";
+import { Sheet, SheetTrigger } from "@/app/_components/ui/sheet";
 import { getBarbeariaById, getServicosByBarbeariaId } from "@/services/barbearia";
-import { ChevronLeftIcon, MapPinIcon, MenuIcon, StarIcon } from "lucide-react";
+import { MapPinIcon, MenuIcon, StarIcon } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 type BarbeariaPageProps = {
@@ -37,17 +38,16 @@ const BarbeariaPage = async (props: BarbeariaPageProps) => {
                     priority
                 />
 
-                <Button size="icon" variant="secondary" className="absolute top-4 left-4 bg-white/30 hover:bg-white/50 backdrop-blur-sm" asChild>
-                    <Link href="/">
-                        <ChevronLeftIcon />
-                    </Link>
-                </Button>
+                <Sheet>
+                    <SheetTrigger asChild>
+                        <Button size="icon" variant="secondary" className="absolute top-4 right-4 ">
+                            <MenuIcon />
+                        </Button>
+                    </SheetTrigger>
+                    <SideBar />
+                </Sheet>
 
-                <Button size="icon" variant="secondary" className="absolute top-4 right-4 bg-white/30 hover:bg-white/50 backdrop-blur-sm">
-                    <Link href="/menu">
-                        <MenuIcon />
-                    </Link>
-                </Button>
+                {/* <SideBarButton /> */}
             </div>
 
             {/*TÍTULO*/}
