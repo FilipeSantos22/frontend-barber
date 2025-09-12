@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
 import { PesquisaRapida } from "../_constants/pesquisar";
@@ -7,8 +9,15 @@ import Link from "next/link";
 import { Button } from "./ui/button";
 import { CalendarIcon, HomeIcon, LogInIcon, LogOutIcon, MenuIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { sign } from "crypto";
+import { signIn } from "next-auth/react";
 
 const SideBar = () => {
+
+    const handleLoginWithGoogleClick = async () => {
+        await signIn("google");
+    }
+
     return ( 
 
             <SheetContent className="overflow-y-auto">
@@ -31,7 +40,7 @@ const SideBar = () => {
                                     Conecte-se usando sua conta do Google.
                                 </DialogDescription>
                                 </DialogHeader>
-                                <Button variant={"outline"} className="w-full mt-3 gap-1 font-bold">
+                                <Button variant={"outline"} className="w-full mt-3 gap-1 font-bold" onClick={handleLoginWithGoogleClick}>
                                     <Image src="/google-icon.svg" alt="Fazer login com o Google" width={18} height={18} className="mr-2" />
                                     Continuar com Google
                                 </Button>
