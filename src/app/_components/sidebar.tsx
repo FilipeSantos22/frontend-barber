@@ -5,7 +5,8 @@ import { Avatar } from "./ui/avatar";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { CalendarIcon, HomeIcon, LogOutIcon, MenuIcon } from "lucide-react";
+import { CalendarIcon, HomeIcon, LogInIcon, LogOutIcon, MenuIcon } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 
 const SideBar = () => {
     return ( 
@@ -15,15 +16,35 @@ const SideBar = () => {
                     <SheetTitle className="text-left">Menu</SheetTitle>
                 </SheetHeader>
 
-                <div className="py-5 flex items-center border-b border-solid gap-3">
-                    <Avatar>
+                <div className="py-5 justify-between flex items-center border-b border-solid gap-3">
+                    <h2 className="font-bold ">Olá, faça o seu login!</h2>
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Button size="icon">
+                                <LogInIcon />
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="w-[95%]">
+                            <DialogHeader>
+                                <DialogTitle>Faça seu login na plataforma</DialogTitle>
+                                <DialogDescription>
+                                    Conecte-se usando sua conta do Google.
+                                </DialogDescription>
+                                </DialogHeader>
+                                <Button variant={"outline"} className="w-full mt-3 gap-1 font-bold">
+                                    <Image src="/google-icon.svg" alt="Fazer login com o Google" width={18} height={18} className="mr-2" />
+                                    Continuar com Google
+                                </Button>
+                        </DialogContent>
+                    </Dialog>
+                    {/* <Avatar>
                         <AvatarImage src="https://images.unsplash.com/photo-1728577740843-5f29c7586afe?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="User Avatar" />
                     </Avatar>
 
                     <div>
                         <p className="font-bold">Filipe Gomes</p>
                         <p className="text-xs">filipe@example.com</p>
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* Conteúdo do menu */}
