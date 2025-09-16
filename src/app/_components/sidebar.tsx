@@ -9,7 +9,6 @@ import Link from "next/link";
 import { Button } from "./ui/button";
 import { CalendarIcon, HomeIcon, LogInIcon, LogOutIcon, MenuIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
-import { sign } from "crypto";
 import { signIn } from "next-auth/react";
 
 const SideBar = () => {
@@ -50,7 +49,7 @@ const SideBar = () => {
                         <AvatarImage src="https://images.unsplash.com/photo-1728577740843-5f29c7586afe?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="User Avatar" />
                     </Avatar>
 
-                    <div>
+                    <div> 
                         <p className="font-bold">Filipe Gomes</p>
                         <p className="text-xs">filipe@example.com</p>
                     </div> */}
