@@ -43,7 +43,7 @@ const BarbeariaItem = ({ barbearia }: BarbeariaItemProps) => {
             <p className="text-sm text-gray-500">Tel: {barbearia.telefone}</p>
           )}
           <Button variant="secondary" className='w-full mt-3' asChild>
-              <Link href={`/barbearia/${barbearia.idBarbearia}`}>Reservar</Link>
+              <Link href={`/barbearias/${barbearia.idBarbearia}`}>Reservar</Link>
           </Button>
         </div>
       </CardContent>

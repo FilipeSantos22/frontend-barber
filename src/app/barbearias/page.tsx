@@ -27,6 +27,9 @@ const BarbeariasPage = async ({ searchParams }: BarbeariasPageProps) => {
                     {barbearias.map((barbearia: any, idx: number) => (
                         <BarbeariaItem key={barbearia.id ?? idx} barbearia={barbearia} />
                     ))}
+                    {barbearias.length === 0 && (
+                        <p className="text-center col-span-2 text-gray-500">Nenhuma barbearia encontrada.</p>
+                    )}
                 </div>
             </div>
 

@@ -88,10 +88,14 @@ const SideBar = () => {
 
                 <div className="flex flex-col gap-2 mt-4 py-5 border-b border-solid ">
                     {PesquisaRapida.map((option, index) => (
-                        <Button key={index} className='gap-2 w-full justify-start' variant='ghost' >
-                            <Image src={option.imagemUrl} alt={option.title} className='' width={16} height={16} />
-                            {option.title}
-                        </Button>
+                        <SheetClose key={index} asChild>
+                            <Button className='gap-2 w-full justify-start' variant='ghost' asChild>
+                                <Link href={'/barbearias?search=' + option.title.toLowerCase()} >
+                                    <Image src={option.imagemUrl} alt={option.title} className='' width={16} height={16} />
+                                    {option.title}
+                                </Link>
+                            </Button>
+                        </SheetClose>
                     ))}
                 </div>
 
