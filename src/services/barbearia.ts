@@ -1,7 +1,8 @@
 import api from "./api";
 
-export async function getBarbearias() {
-    const { data } = await api.get("/barbearias");
+export async function getBarbearias(search?: string) {
+    const url = search ? `/barbearias?search=${encodeURIComponent(search)}` : "/barbearias";
+    const { data } = await api.get(url);
     return data;
 }
 

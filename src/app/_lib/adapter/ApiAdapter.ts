@@ -75,7 +75,6 @@ export function ApiAdapter(): Adapter {
             }
             // Buscar o usuário relacionado à sessão
             const { data: user } = await api.get(`${API_URL}/usuarios/${session.userId}`);
-            console.log('Sessão e usuário obtidos:', { session, user });
             return { session, user };
         },
         async updateSession(session: Record<string, any>) {

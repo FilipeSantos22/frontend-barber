@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import BarbeariaItem from './_components/barbearia.item';
 import { PesquisaRapida } from './_constants/pesquisar';
 import AgendamentoItem from './_components/agendamento-item';
+import Search from './_components/search';
 
 export default function Home() {
   const [barbearias, setBarbearias] = useState<any[]>([]);
@@ -28,11 +29,8 @@ export default function Home() {
             <p>Terça-feira, 02 de Setembro</p>
             
             {/* BUSCA */}
-            <div className='flex items-center gap-2 mt-6'>
-                <Input placeholder='Faça sua busca' />
-                <Button>
-                    <SearchIcon />
-                </Button>
+            <div className='mt-6'>
+                <Search />
             </div>
 
             {/* PESQUISA RÁPIDA */}
