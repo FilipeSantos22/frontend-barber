@@ -1,14 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
+import {  SheetClose, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
 import { PesquisaRapida } from "../_constants/pesquisar";
 import { Avatar } from "./ui/avatar";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { CalendarIcon, HomeIcon, LogInIcon, LogOutIcon, MenuIcon } from "lucide-react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { CalendarIcon, HomeIcon, LogInIcon, LogOutIcon } from "lucide-react";
+import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import { signIn, signOut, useSession } from "next-auth/react";
 import SignInDialog from "./sign-in-dialog";
 
@@ -91,10 +91,12 @@ const SideBar = () => {
                     ))}
                 </div>
 
-                <div className="flex flex-col gap-2 mt-4 py-5">
-                    <Button className="justify-start" variant='ghost' onClick={handleLogoutClick}>
-                        <LogOutIcon /> Sair da conta</Button>
-                </div>
+                {data?.user && (
+                    <div className="flex flex-col gap-2 mt-4 py-5">
+                        <Button className="justify-start" variant='ghost' onClick={handleLogoutClick}>
+                            <LogOutIcon /> Sair da conta</Button>
+                    </div>
+                )}
             </SheetContent>
     );
 }

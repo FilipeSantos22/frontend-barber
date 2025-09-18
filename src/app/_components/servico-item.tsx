@@ -21,7 +21,7 @@ interface ServicoItemProps {
 
 const ServicoItem = ({ servico }: ServicoItemProps) => {
 
-    const [signInDialogOpen, setSignInDialogIsOpen] = useState(false);
+    const [signInDialogIsOpen, setSignInDialogIsOpen] = useState(false);
 
     const { data } = useSession();
     const preco = servico.preco !== null && servico.preco !== undefined
@@ -50,9 +50,9 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
 
     const handleBookingClick = () => { 
         if (!data?.user) {
-            return setBookingSheetIsOpen(true);
+            return setSignInDialogIsOpen(true);
         }
-        return setSignInDialogIsOpen(true);
+        return setBookingSheetIsOpen(true);
     }
 
     const handleSheetOpenChange = () => {
@@ -229,8 +229,8 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
             </Card>
 
 
-            <Dialog open={signInDialogOpen} onOpenChange={(open) => setSignInDialogIsOpen(open)}>
-                <DialogContent className="w-[95%]">
+            <Dialog open={signInDialogIsOpen} onOpenChange={(open) => setSignInDialogIsOpen(open)}>
+                <DialogContent className="w-[90%]">
                     <SignInDialog />
                 </DialogContent>
             </Dialog>
