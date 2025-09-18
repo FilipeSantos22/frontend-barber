@@ -52,7 +52,7 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
                 idServico: servico.idServico,
                 idBarbearia: servico.idBarbearia,
                 idBarbeiro: 1,// temporários -> aqui tem que pegar o barbeiro selecionado
-                idUsuario: 2, // temporario -> depois pegar do usuario logado
+                id: 2, // temporario -> depois pegar do usuario logado
                 data_hora: novaData,
                 descricao: servico.nome,
             });
