@@ -4,7 +4,7 @@ interface CriarAgendamentosParams {
     idServico: number;
     idBarbearia: number;
     idBarbeiro: number;
-    idUsuario: number;
+    id: number;
     data_hora: Date;
     descricao: string;
 }
