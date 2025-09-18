@@ -10,6 +10,8 @@ import { useEffect, useState } from 'react';
 import BarbeariaItem from './_components/barbearia.item';
 import { PesquisaRapida } from './_constants/pesquisar';
 import AgendamentoItem from './_components/agendamento-item';
+import Search from './_components/search';
+import Link from 'next/link';
 
 export default function Home() {
   const [barbearias, setBarbearias] = useState<any[]>([]);
@@ -28,20 +30,19 @@ export default function Home() {
             <p>Terça-feira, 02 de Setembro</p>
             
             {/* BUSCA */}
-            <div className='flex items-center gap-2 mt-6'>
-                <Input placeholder='Faça sua busca' />
-                <Button>
-                    <SearchIcon />
-                </Button>
+            <div className='mt-6'>
+                <Search />
             </div>
 
             {/* PESQUISA RÁPIDA */}
             <div className='flex gap-3 mt-6'>
                 {
                     PesquisaRapida.map((option, index) => (
-                        <Button key={index} className='gap-2' variant='secondary' >
-                            <Image src={option.imagemUrl} alt={option.title} className='' width={16} height={16} />
-                            {option.title}
+                        <Button className='gap-2' variant='secondary' asChild key={index}>
+                            <Link href={'/barbearias?search=' + option.title.toLowerCase()} >
+                                <Image src={option.imagemUrl} alt={option.title} className='' width={16} height={16} />
+                                {option.title}
+                            </Link>
                         </Button>
                     ))
                 }
