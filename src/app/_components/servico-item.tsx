@@ -12,7 +12,6 @@ import { criarAgendamento } from "../_actions/criar-agendamento";
 import { useSession } from "next-auth/react";
 
 
-
 interface ServicoItemProps {
     servico: Servico;
     // barbearia: Pick<Barbearia, 'nome'>;
@@ -54,7 +53,7 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
                 idServico: servico.idServico,
                 idBarbearia: servico.idBarbearia,
                 idBarbeiro: 1,// temporários -> aqui tem que pegar o barbeiro selecionado
-                id: 2, // temporario -> depois pegar do usuario logado
+                id: (data?.user as any).id,
                 data_hora: novaData,
                 descricao: servico.nome,
             });
@@ -180,10 +179,9 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
                                         </Card>
                                     </div>
                                 )}
-
                                 <SheetFooter className="px-5 ">
                                     <SheetClose asChild>
-                                        <Button type="submit" onClick={handleCriarAgendamento}>Confirmar</Button>
+                                        <Button type="submit" onClick={handleCriarAgendamento} disabled={!selectedTime || !selectedDay}>Confirmar</Button>
                                     </SheetClose>
                                 </SheetFooter>
                             </SheetContent>
