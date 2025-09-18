@@ -1,20 +1,20 @@
 "use client"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { Calendar } from "./ui/calendar";
 import { Card, CardContent } from "./ui/card";
-import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet";
+import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle } from "./ui/sheet";
 import { ptBR } from "date-fns/locale";
 import { format, set } from "date-fns";
 import { Servico } from "../../types/Servico";
 import { toast } from "sonner";
 import { criarAgendamento } from "../_actions/criar-agendamento";
 import { useSession } from "next-auth/react";
+import { getAgendamentos } from "../_actions/get-agendamentos";
 
 
 interface ServicoItemProps {
     servico: Servico;
-    // barbearia: Pick<Barbearia, 'nome'>;
 }
 
 const ServicoItem = ({ servico }: ServicoItemProps) => {
@@ -22,9 +22,33 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
     const preco = servico.preco !== null && servico.preco !== undefined
         ? Number(servico.preco).toFixed(2)
         : null;
-    const TIME_LIST = ["08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00"];
     const [selectedDay, setSelectedDay] = useState<Date | undefined>(undefined);
     const [selectedTime, setSelectedTime] = useState<string | undefined>(undefined);
+    const [diaAgendamento, setDiaAgendamento] = useState<{ horario: string }[]>([]);
+    const [bookingSheetIsOpen, setBookingSheetIsOpen] = useState(false);
+
+    useEffect(() => {
+        if (!selectedDay) return;
+        
+        const params = {
+            idBarbearia: servico.idBarbearia,
+            idServico: servico.idServico,
+            data_hora: selectedDay,
+            idBarbeiro: 1
+        };
+        const fetch = async () => {
+            const agendamentos = await getAgendamentos(params);
+            setDiaAgendamento(agendamentos ?? []);
+        }
+        fetch();
+    }, [servico.idBarbearia, servico.idServico, selectedDay]);
+
+    const handleSheetOpenChange = () => {
+        setSelectedDay(undefined);
+        setSelectedTime(undefined);
+        setDiaAgendamento([]);
+        setBookingSheetIsOpen(false);
+    }
 
     const handleDateSelect = (day: Date | undefined) => {
         setSelectedDay(day);
@@ -57,6 +81,7 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
                 data_hora: novaData,
                 descricao: servico.nome,
             });
+            handleSheetOpenChange();
             toast.success("Agendamento criado com sucesso!");
         } catch (error) {
             console.error("Erro ao criar agendamento:", error);
@@ -82,12 +107,11 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
                         <p className="text-sm text-gray-400 font-bold ">
                             {preco ? `R$ ${preco}` : 'A negociar'}
                         </p>
-                        <Sheet>
-                            <SheetTrigger asChild>
-                                <Button variant="secondary" className='ml-5' size="sm">
-                                    Reservar
-                                </Button>
-                            </SheetTrigger>
+                        <Sheet open={bookingSheetIsOpen} onOpenChange={handleSheetOpenChange}>
+                            <Button variant="secondary" className='ml-5' size="sm" onClick={() => setBookingSheetIsOpen(true)}>
+                                Reservar
+                            </Button>
+                            
                             <SheetContent>
                                 <SheetHeader>
                                     <SheetTitle>Fazer Reserva</SheetTitle>
@@ -98,7 +122,8 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
                                         mode="single"
                                         locale={ptBR}
                                         selected={selectedDay}
-                                        onSelect={handleDateSelect}   
+                                        onSelect={handleDateSelect}
+                                        hidden={{ before: new Date() }}
                                         styles={{
                                             head_cell: {
                                                 width: "10%",
@@ -126,19 +151,18 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
                                     
                                 </div>
 
-                                {selectedDay && ( 
-                                    <div className="flex overflow-x-auto p-5 gap-3 [&::-webkit-scrollbar]:hidden border-b border-solid mb-5"> 
-                                        {TIME_LIST.map((time) => (
-                                            <Button 
-                                                key={time}
-                                                variant={time === selectedTime ? "default" : "outline"}
-                                                className="mr-2 mb-2 rounded-full "
-                                                onClick={() => handleTimeSelect(time)}
+                                {selectedDay && (
+                                    <div className="flex overflow-x-auto p-5 gap-3 [&::-webkit-scrollbar]:hidden border-b border-solid mb-5">
+                                        {(diaAgendamento ?? []).map((item: { horario: string }) => (
+                                            <Button
+                                                key={item.horario}
+                                                variant={item.horario === selectedTime ? "default" : "outline"}
+                                                className="mr-2 mb-2 rounded-full"
+                                                onClick={() => handleTimeSelect(item.horario)}
                                             >
-                                                {time}
+                                                {item.horario.slice(0, 5)}
                                             </Button>
                                         ))}
-
                                     </div>
                                 )}
 
@@ -180,9 +204,8 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
                                     </div>
                                 )}
                                 <SheetFooter className="px-5 ">
-                                    <SheetClose asChild>
-                                        <Button type="submit" onClick={handleCriarAgendamento} disabled={!selectedTime || !selectedDay}>Confirmar</Button>
-                                    </SheetClose>
+                                    <Button type="submit" onClick={handleCriarAgendamento} disabled={!selectedTime || !selectedDay}>Confirmar</Button>
+                                    
                                 </SheetFooter>
                             </SheetContent>
                         </Sheet>

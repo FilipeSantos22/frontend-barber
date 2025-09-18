@@ -1,4 +1,5 @@
 "use server"
+import { revalidatePath } from "next/cache";
 
 interface CriarAgendamentosParams {
     idServico: number;
@@ -17,6 +18,8 @@ export const criarAgendamento = async (params: CriarAgendamentosParams) => {
             "Content-Type": "application/json",
         },
     });
+
+    revalidatePath("barbearias/{id}");
 
     if (!response.ok) {
         throw new Error("Erro ao criar agendamento");
