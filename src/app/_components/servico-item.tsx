@@ -11,6 +11,8 @@ import { toast } from "sonner";
 import { criarAgendamento } from "../_actions/criar-agendamento";
 import { useSession } from "next-auth/react";
 import { getAgendamentos } from "../_actions/get-agendamentos";
+import { Dialog, DialogContent } from "./ui/dialog";
+import SignInDialog from "./sign-in-dialog";
 
 
 interface ServicoItemProps {
@@ -18,6 +20,9 @@ interface ServicoItemProps {
 }
 
 const ServicoItem = ({ servico }: ServicoItemProps) => {
+
+    const [signInDialogOpen, setSignInDialogIsOpen] = useState(false);
+
     const { data } = useSession();
     const preco = servico.preco !== null && servico.preco !== undefined
         ? Number(servico.preco).toFixed(2)
@@ -42,6 +47,13 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
         }
         fetch();
     }, [servico.idBarbearia, servico.idServico, selectedDay]);
+
+    const handleBookingClick = () => { 
+        if (!data?.user) {
+            return setBookingSheetIsOpen(true);
+        }
+        return setSignInDialogIsOpen(true);
+    }
 
     const handleSheetOpenChange = () => {
         setSelectedDay(undefined);
@@ -90,130 +102,139 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
 
     }
     return (
-        <Card className="p-4 mb-3">
-            <CardContent className="flex items-center gap-3 p-3">
-                {/* VERIFICAR A NECESSIDADE DE INSERIR A IMAGEM DO SERVIÇO. SE SIM, INSERIR NOVA COLUNA NO DB */}
-                {/*<div className="relative min-h-[110px] max-h-[110px] min-w-[110px] max-w-[110px]"><Image src={servico.imagem} alt={servico.nome} fill className="object-cover rounded-xl" /></div>*/}
-                
-                <div className="space-y-2">
+        <>
+            <Card className="p-4 mb-3">
+                <CardContent className="flex items-center gap-3 p-3">
+                    {/* VERIFICAR A NECESSIDADE DE INSERIR A IMAGEM DO SERVIÇO. SE SIM, INSERIR NOVA COLUNA NO DB */}
+                    {/*<div className="relative min-h-[110px] max-h-[110px] min-w-[110px] max-w-[110px]"><Image src={servico.imagem} alt={servico.nome} fill className="object-cover rounded-xl" /></div>*/}
                     
-                    <h3 className="font-semibold text-sm">{servico.nome}</h3>
-                    {servico.duracao_minutos && (
-                        <p className="text-sm text-gray-400">
-                            Duração: {servico.duracao_minutos} minutos
-                        </p>
-                    )}
-                    <div className="flex items-center justify-between">
-                        <p className="text-sm text-gray-400 font-bold ">
-                            {preco ? `R$ ${preco}` : 'A negociar'}
-                        </p>
-                        <Sheet open={bookingSheetIsOpen} onOpenChange={handleSheetOpenChange}>
-                            <Button variant="secondary" className='ml-5' size="sm" onClick={() => setBookingSheetIsOpen(true)}>
-                                Reservar
-                            </Button>
-                            
-                            <SheetContent>
-                                <SheetHeader>
-                                    <SheetTitle>Fazer Reserva</SheetTitle>
-                                </SheetHeader>
+                    <div className="space-y-2">
+                        
+                        <h3 className="font-semibold text-sm">{servico.nome}</h3>
+                        {servico.duracao_minutos && (
+                            <p className="text-sm text-gray-400">
+                                Duração: {servico.duracao_minutos} minutos
+                            </p>
+                        )}
+                        <div className="flex items-center justify-between">
+                            <p className="text-sm text-gray-400 font-bold ">
+                                {preco ? `R$ ${preco}` : 'A negociar'}
+                            </p>
+                            <Sheet open={bookingSheetIsOpen} onOpenChange={handleSheetOpenChange}>
+                                <Button variant="secondary" className='ml-5' size="sm" onClick={handleBookingClick}>
+                                    Reservar
+                                </Button>
+                                
+                                <SheetContent>
+                                    <SheetHeader>
+                                        <SheetTitle>Fazer Reserva</SheetTitle>
+                                    </SheetHeader>
 
-                                <div className="border-b border-solid py-5">
-                                    <Calendar 
-                                        mode="single"
-                                        locale={ptBR}
-                                        selected={selectedDay}
-                                        onSelect={handleDateSelect}
-                                        hidden={{ before: new Date() }}
-                                        styles={{
-                                            head_cell: {
-                                                width: "10%",
-                                                textTransform: "capitalize",
-                                            },
-                                            cell: {
-                                                width: "10%",
-                                            },
-                                            button: {
-                                                width: "10%",
-                                            },
-                                            nav_button_previous: {
-                                                width: "32px",
-                                                height: "32px",
-                                            },
-                                            nav_button_next: {
-                                                width: "32px",
-                                                height: "32px",
-                                            },
-                                            caption: {
-                                                textTransform: "capitalize",
-                                            },
-                                        }} 
-                                    />
-                                    
-                                </div>
-
-                                {selectedDay && (
-                                    <div className="flex overflow-x-auto p-5 gap-3 [&::-webkit-scrollbar]:hidden border-b border-solid mb-5">
-                                        {(diaAgendamento ?? []).map((item: { horario: string }) => (
-                                            <Button
-                                                key={item.horario}
-                                                variant={item.horario === selectedTime ? "default" : "outline"}
-                                                className="mr-2 mb-2 rounded-full"
-                                                onClick={() => handleTimeSelect(item.horario)}
-                                            >
-                                                {item.horario.slice(0, 5)}
-                                            </Button>
-                                        ))}
+                                    <div className="border-b border-solid py-5">
+                                        <Calendar 
+                                            mode="single"
+                                            locale={ptBR}
+                                            selected={selectedDay}
+                                            onSelect={handleDateSelect}
+                                            hidden={{ before: new Date() }}
+                                            styles={{
+                                                head_cell: {
+                                                    width: "10%",
+                                                    textTransform: "capitalize",
+                                                },
+                                                cell: {
+                                                    width: "10%",
+                                                },
+                                                button: {
+                                                    width: "10%",
+                                                },
+                                                nav_button_previous: {
+                                                    width: "32px",
+                                                    height: "32px",
+                                                },
+                                                nav_button_next: {
+                                                    width: "32px",
+                                                    height: "32px",
+                                                },
+                                                caption: {
+                                                    textTransform: "capitalize",
+                                                },
+                                            }} 
+                                        />
+                                        
                                     </div>
-                                )}
 
-                                {selectedTime && selectedDay && (
-                                    <div className="div p-5">
-                                        <Card className="">
-                                            <CardContent className="p-3 space-y-3">
-                                                <div className="div flex justify-between items-center">
-                                                    <h2 className="font-bold"> {servico.nome}</h2>
-                                                    <p className="text-sm font-bold">
-                                                        {Intl.NumberFormat('pt-BR', { 
-                                                            style: 'currency', 
-                                                            currency: 'BRL' }).format(servico.preco || 0)}
-                                                    </p>
-                                                </div>
+                                    {selectedDay && (
+                                        <div className="flex overflow-x-auto p-5 gap-3 [&::-webkit-scrollbar]:hidden border-b border-solid mb-5">
+                                            {(diaAgendamento ?? []).map((item: { horario: string }) => (
+                                                <Button
+                                                    key={item.horario}
+                                                    variant={item.horario === selectedTime ? "default" : "outline"}
+                                                    className="mr-2 mb-2 rounded-full"
+                                                    onClick={() => handleTimeSelect(item.horario)}
+                                                >
+                                                    {item.horario.slice(0, 5)}
+                                                </Button>
+                                            ))}
+                                        </div>
+                                    )}
 
-                                                <div className="div flex justify-between items-center">
-                                                    <h2 className="text-sm text-gray-400">Data</h2>
-                                                    <p className="text-sm">
-                                                        {format(selectedDay, "d 'de'  MMMM", { locale: ptBR })} - {selectedTime}
-                                                    </p>
-                                                </div>
+                                    {selectedTime && selectedDay && (
+                                        <div className="div p-5">
+                                            <Card className="">
+                                                <CardContent className="p-3 space-y-3">
+                                                    <div className="div flex justify-between items-center">
+                                                        <h2 className="font-bold"> {servico.nome}</h2>
+                                                        <p className="text-sm font-bold">
+                                                            {Intl.NumberFormat('pt-BR', { 
+                                                                style: 'currency', 
+                                                                currency: 'BRL' }).format(servico.preco || 0)}
+                                                        </p>
+                                                    </div>
 
-                                                <div className="div flex justify-between items-center">
-                                                    <h2 className="text-sm text-gray-400">Horário</h2>
-                                                    <p className="text-sm">
-                                                        {selectedTime}
-                                                    </p>
-                                                </div>
+                                                    <div className="div flex justify-between items-center">
+                                                        <h2 className="text-sm text-gray-400">Data</h2>
+                                                        <p className="text-sm">
+                                                            {format(selectedDay, "d 'de'  MMMM", { locale: ptBR })} - {selectedTime}
+                                                        </p>
+                                                    </div>
 
-                                                <div className="div flex justify-between items-center">
-                                                    <h2 className="text-sm text-gray-400">Barbearia: </h2>
-                                                    <p className="text-sm">
-                                                        {servico.nomeBarbearia}
-                                                    </p>
-                                                </div>
-                                            </CardContent>
-                                        </Card>
-                                    </div>
-                                )}
-                                <SheetFooter className="px-5 ">
-                                    <Button type="submit" onClick={handleCriarAgendamento} disabled={!selectedTime || !selectedDay}>Confirmar</Button>
-                                    
-                                </SheetFooter>
-                            </SheetContent>
-                        </Sheet>
+                                                    <div className="div flex justify-between items-center">
+                                                        <h2 className="text-sm text-gray-400">Horário</h2>
+                                                        <p className="text-sm">
+                                                            {selectedTime}
+                                                        </p>
+                                                    </div>
+
+                                                    <div className="div flex justify-between items-center">
+                                                        <h2 className="text-sm text-gray-400">Barbearia: </h2>
+                                                        <p className="text-sm">
+                                                            {servico.nomeBarbearia}
+                                                        </p>
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+                                        </div>
+                                    )}
+                                    <SheetFooter className="px-5 ">
+                                        <Button type="submit" onClick={handleCriarAgendamento} disabled={!selectedTime || !selectedDay}>Confirmar</Button>
+                                        
+                                    </SheetFooter>
+                                </SheetContent>
+                            </Sheet>
+                        </div>
+
                     </div>
+                </CardContent>
+            </Card>
 
-                </div>
-            </CardContent>
-        </Card>
+
+            <Dialog open={signInDialogOpen} onOpenChange={(open) => setSignInDialogIsOpen(open)}>
+                <DialogContent className="w-[95%]">
+                    <SignInDialog />
+                </DialogContent>
+            </Dialog>
+        </>
     );
 }
  

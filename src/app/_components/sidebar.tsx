@@ -10,6 +10,7 @@ import { Button } from "./ui/button";
 import { CalendarIcon, HomeIcon, LogInIcon, LogOutIcon, MenuIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { signIn, signOut, useSession } from "next-auth/react";
+import SignInDialog from "./sign-in-dialog";
 
 const SideBar = () => {
 
@@ -53,16 +54,7 @@ const SideBar = () => {
                                 </Button>
                             </DialogTrigger>
                             <DialogContent className="w-[95%]">
-                                <DialogHeader>
-                                    <DialogTitle>Faça seu login na plataforma</DialogTitle>
-                                    <DialogDescription>
-                                        Conecte-se usando sua conta do Google.
-                                    </DialogDescription>
-                                    </DialogHeader>
-                                    <Button variant={"outline"} className="w-full mt-3 gap-1 font-bold" onClick={handleLoginWithGoogleClick}>
-                                        <Image src="/google-icon.svg" alt="Fazer login com o Google" width={18} height={18} className="mr-2" />
-                                        Continuar com Google
-                                    </Button>
+                                <SignInDialog />
                             </DialogContent>
                         </Dialog>
                     </>)}
