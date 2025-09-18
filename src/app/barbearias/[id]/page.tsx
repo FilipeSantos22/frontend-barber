@@ -1,6 +1,7 @@
 import ServicoItem from "@/app/_components/servico-item";
 import SideBar from "@/app/_components/sidebar";
 import TelefoneItem from "@/app/_components/telefone-item";
+import { Barbearia } from "../../../types/Barbearia";
 import { Button } from "@/app/_components/ui/button";
 import { Sheet, SheetTrigger } from "@/app/_components/ui/sheet";
 import { getBarbeariaById, getServicosByBarbeariaId } from "@/services/barbearia";
@@ -15,11 +16,16 @@ type BarbeariaPageProps = {
 
 const BarbeariaPage = async (props: BarbeariaPageProps) => {
     const awaitedParams = await props.params;
-    let barbearia = null;
+    let barbearia: Barbearia | null = null;
     let servicosBarbearia = null;
+    
     try {
         barbearia = await getBarbeariaById(Number(awaitedParams.id));
         servicosBarbearia = await getServicosByBarbeariaId(Number(awaitedParams.id));
+        servicosBarbearia = servicosBarbearia.map((servico: any) => ({
+        ...servico,
+        nomeBarbearia: barbearia?.nome,
+        }));
     } catch (error) {
         // Se for 404, barbearia permanece null
     }
