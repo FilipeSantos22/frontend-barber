@@ -11,6 +11,15 @@ const handler = NextAuth({
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
         }),
     ],
+    callbacks: {
+        async session({ session, user }) {
+            session.user = {
+                ...session.user,
+                id: user.id,
+            } as any
+            return session
+        }
+    },
   // Outras configurações do NextAuth, como callbacks, páginas personalizadas, etc.
 })
 

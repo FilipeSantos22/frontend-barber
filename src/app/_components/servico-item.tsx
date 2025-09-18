@@ -9,6 +9,7 @@ import { format, set } from "date-fns";
 import { Servico } from "../../types/Servico";
 import { toast } from "sonner";
 import { criarAgendamento } from "../_actions/criar-agendamento";
+import { useSession } from "next-auth/react";
 
 
 
@@ -18,6 +19,7 @@ interface ServicoItemProps {
 }
 
 const ServicoItem = ({ servico }: ServicoItemProps) => {
+    const { data } = useSession();
     const preco = servico.preco !== null && servico.preco !== undefined
         ? Number(servico.preco).toFixed(2)
         : null;
