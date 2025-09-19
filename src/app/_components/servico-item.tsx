@@ -22,11 +22,11 @@ interface ServicoItemProps {
 const ServicoItem = ({ servico }: ServicoItemProps) => {
 
     const [signInDialogIsOpen, setSignInDialogIsOpen] = useState(false);
-
     const { data } = useSession();
     const preco = servico.preco !== null && servico.preco !== undefined
         ? Number(servico.preco).toFixed(2)
         : null;
+
     const [selectedDay, setSelectedDay] = useState<Date | undefined>(undefined);
     const [selectedTime, setSelectedTime] = useState<string | undefined>(undefined);
     const [diaAgendamento, setDiaAgendamento] = useState<{ horario: string }[]>([]);

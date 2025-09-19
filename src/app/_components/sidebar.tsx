@@ -71,9 +71,9 @@ const SideBar = () => {
                             </Link>
                         </Button>
                     </SheetClose>
-                    <Button variant="ghost" size="lg" className="w-full gap-2 justify-start">
-                        <Link href="/agendamento">
-                            <CalendarIcon size={18} /> Agendamento
+                    <Button variant="ghost" size="lg" className="w-full gap-2 justify-start" asChild>
+                        <Link href="/agendamentos">
+                            <CalendarIcon size={18} /> Agendamentos
                         </Link>
                     </Button>
                 </div>
