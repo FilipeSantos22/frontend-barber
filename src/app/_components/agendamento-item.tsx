@@ -1,15 +1,22 @@
+"use client"
 import { Card, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
 import { Avatar, AvatarImage } from './ui/avatar';
 import { format, isFuture } from "date-fns"
 import { ptBR } from "date-fns/locale"
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
+import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
 import Image from 'next/image';
 import TelefoneItem from './telefone-item';
+import { Button } from './ui/button';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { deleteAgendamento } from '../_actions/delete-agendamento';
+import { toast } from 'sonner';
+import { useState } from 'react';
 
 interface Agendamento {
     id: number; // id do user
     idBarbeiro: number;
+    idAgendamento: number;
     idBarbearia: number;
     idServico: number;
     data_hora: string;
@@ -30,8 +37,25 @@ interface AgendamentoItemProps {
 const AgendamentoItem = ({ agendamento }: AgendamentoItemProps) => {
     const date = new Date(agendamento.data_hora);
     const confirmado = isFuture(date) && agendamento.status != 'cancelado';
+    const [open, setOpen] = useState(false);
+
+    const handleDeleteAgendamento = async () => {
+        try {
+            await deleteAgendamento(agendamento.idAgendamento);
+            setOpen(false);
+            toast.success("Agendamento cancelado com sucesso!");
+        } catch (error) {
+            console.error("Erro ao deletar o agendamento:", error);
+            toast.error("Erro ao cancelar o agendamento. Tente novamente.");
+        }
+    }
+
+    const handleSheetOpenChange = (isOpen: boolean) => {
+        setOpen(isOpen);
+    }
+
     return ( 
-        <Sheet>
+        <Sheet open={open} onOpenChange={handleSheetOpenChange}>
             <SheetTrigger className='w-full'>
                 <Card className='min-w-[90%]'>
                     <CardContent className='flex justify-between p-0'>
@@ -72,22 +96,22 @@ const AgendamentoItem = ({ agendamento }: AgendamentoItemProps) => {
                </SheetHeader>
                <div className='relative h-[180px] w-full flex items-end mt-6 overflow-hidden rounded-xl'>
                     <Image 
-                        className='object-cover align-items-center w-[90%] mx-auto px-4 rounded-xl'   
+                        className='object-cover w-full h-full'   
                         src="/Barbearia-Card.png" 
                         alt={agendamento.barbearia_nome} 
-                        fill />
-
-                        <Card className='z-50 w-full mb-3 mx-5 rounded-xl'>
-                            <CardContent className='px-5 py-3 flex gap-3 items-center'>
-                                <Avatar>
-                                    <AvatarImage src={agendamento.barbearia_imagem_url}></AvatarImage>
-                                </Avatar>
-                                <div>
-                                    <h3 className='font-bold'>{agendamento.barbearia_nome}</h3>
-                                    <h3 className='text-xs'>{agendamento.barbearia_endereco}</h3>
-                                </div>
-                            </CardContent>
-                        </Card>
+                        fill
+                    />
+                    <Card className='z-50 w-full mb-3 mx-5 rounded-xl'>
+                        <CardContent className='px-5 py-3 flex gap-3 items-center'>
+                            <Avatar>
+                                <AvatarImage src={agendamento.barbearia_imagem_url}></AvatarImage>
+                            </Avatar>
+                            <div>
+                                <h3 className='font-bold'>{agendamento.barbearia_nome}</h3>
+                                <h3 className='text-xs'>{agendamento.barbearia_endereco}</h3>
+                            </div>
+                        </CardContent>
+                    </Card>
                </div>
                <div className='mt-6 w-[90%] align-items-center mx-auto rounded-xl'>
                     <Badge className='w-fit' variant={confirmado ? 'default' : 'secondary'}>{confirmado ? 'Confirmado' : 'Finalizado'}</Badge>
@@ -128,6 +152,38 @@ const AgendamentoItem = ({ agendamento }: AgendamentoItemProps) => {
 
                     <TelefoneItem telefone={agendamento.barbearia_telefone} />
                </div>
+
+              <SheetFooter className='mt-6'>
+                <div className="flex items-center gap-3 w-full">
+                    <SheetClose asChild>
+                        <Button variant="outline" className='w-[48%]'>Voltar</Button>
+                    </SheetClose>
+                    {confirmado && (
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <Button variant="destructive" className='w-[48%]'>Cancelar</Button>
+                            </DialogTrigger>
+                            <DialogContent className='w-[90%]'>
+                                <DialogHeader>
+                                    <DialogTitle>Você quer cancelar o agendamento?</DialogTitle>
+                                    <DialogDescription>
+                                        Esta ação não pode ser desfeita. Isso irá cancelar seu agendamento
+                                        e remover seus dados de nossos servidores.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <DialogFooter className='flex flex-row gap-3'>
+                                    <DialogClose asChild>
+                                        <Button variant="secondary" className='w-[48%]'>Voltar</Button>
+                                    </DialogClose>
+                                    <DialogClose className='w-[48%]' asChild>
+                                        <Button variant="destructive" className='w-[48%]' onClick={handleDeleteAgendamento}>Confirmar</Button>
+                                    </DialogClose>
+                                </DialogFooter>
+                            </DialogContent>
+                        </Dialog>                        
+                    )}
+                </div>
+              </SheetFooter>
             </SheetContent>
         </Sheet>
      );
