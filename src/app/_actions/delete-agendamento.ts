@@ -7,5 +7,4 @@ export const deleteAgendamento = async (id: number) => {
         method: 'DELETE',
     });
     revalidatePath("agendamentos");
-    return res.json();
 };

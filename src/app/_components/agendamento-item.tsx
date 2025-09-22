@@ -75,15 +75,15 @@ const AgendamentoItem = ({ agendamento }: AgendamentoItemProps) => {
                         </div>
 
                         <div className="flex flex-col items-center justify-center border-l-2 border-solid px-5">
-                        <p className="text-sm capitalize">
-                            {format(agendamento.data_hora, "MMMM", { locale: ptBR })}
-                        </p>
-                        <p className="text-2xl">
-                            {format(agendamento.data_hora, "dd", { locale: ptBR })}
-                        </p>
-                        <p className="text-sm">
-                            {format(agendamento.data_hora, "HH:mm", { locale: ptBR })}
-                        </p>
+                            <p className="text-sm capitalize">
+                                {format(agendamento.data_hora, "MMMM", { locale: ptBR })}
+                            </p>
+                            <p className="text-2xl">
+                                {format(agendamento.data_hora, "dd", { locale: ptBR })}
+                            </p>
+                            <p className="text-sm">
+                                {format(agendamento.data_hora, "HH:mm", { locale: ptBR })}
+                            </p>
                         </div>
                     </CardContent>
                 </Card>
