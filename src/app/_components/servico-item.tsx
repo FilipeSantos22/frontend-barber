@@ -13,6 +13,7 @@ import { useSession } from "next-auth/react";
 import { getAgendamentos } from "../_actions/get-agendamentos";
 import { Dialog, DialogContent } from "./ui/dialog";
 import SignInDialog from "./sign-in-dialog";
+import ResumoAgendamento from "./resumo-agendamendo";
 
 
 interface ServicoItemProps {
@@ -39,7 +40,7 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
             idBarbearia: servico.idBarbearia,
             idServico: servico.idServico,
             data_hora: selectedDay,
-            idBarbeiro: 1
+            idBarbeiro: 1 // TODO: ajustar para o barbeiro selecionado
         };
         const fetch = async () => {
             const agendamentos = await getAgendamentos(params);
@@ -179,40 +180,16 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
                                     )}
 
                                     {selectedTime && selectedDay && (
-                                        <div className="div p-5">
-                                            <Card className="">
-                                                <CardContent className="p-3 space-y-3">
-                                                    <div className="div flex justify-between items-center">
-                                                        <h2 className="font-bold"> {servico.nome}</h2>
-                                                        <p className="text-sm font-bold">
-                                                            {Intl.NumberFormat('pt-BR', { 
-                                                                style: 'currency', 
-                                                                currency: 'BRL' }).format(servico.preco || 0)}
-                                                        </p>
-                                                    </div>
-
-                                                    <div className="div flex justify-between items-center">
-                                                        <h2 className="text-sm text-gray-400">Data</h2>
-                                                        <p className="text-sm">
-                                                            {format(selectedDay, "d 'de'  MMMM", { locale: ptBR })} - {selectedTime}
-                                                        </p>
-                                                    </div>
-
-                                                    <div className="div flex justify-between items-center">
-                                                        <h2 className="text-sm text-gray-400">Horário</h2>
-                                                        <p className="text-sm">
-                                                            {selectedTime}
-                                                        </p>
-                                                    </div>
-
-                                                    <div className="div flex justify-between items-center">
-                                                        <h2 className="text-sm text-gray-400">Barbearia: </h2>
-                                                        <p className="text-sm">
-                                                            {servico.nomeBarbearia}
-                                                        </p>
-                                                    </div>
-                                                </CardContent>
-                                            </Card>
+                                        <div className="p-5">
+                                            <ResumoAgendamento
+                                                    servico={{
+                                                        nome: servico.nome,
+                                                        preco: servico.preco,
+                                                        nomeBarbearia: servico.nomeBarbearia,
+                                                    }}
+                                                    selectedDay={selectedDay}
+                                                    selectedTime={selectedTime.slice(0, 5)}
+                                                />
                                         </div>
                                     )}
                                     <SheetFooter className="px-5 ">

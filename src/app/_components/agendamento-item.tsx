@@ -12,6 +12,7 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import { deleteAgendamento } from '../_actions/delete-agendamento';
 import { toast } from 'sonner';
 import { useState } from 'react';
+import ResumoAgendamento from './resumo-agendamendo';
 
 interface Agendamento {
     id: number; // id do user
@@ -76,13 +77,13 @@ const AgendamentoItem = ({ agendamento }: AgendamentoItemProps) => {
 
                         <div className="flex flex-col items-center justify-center border-l-2 border-solid px-5">
                             <p className="text-sm capitalize">
-                                {format(agendamento.data_hora, "MMMM", { locale: ptBR })}
+                                {format(date, "MMMM", { locale: ptBR })}
                             </p>
                             <p className="text-2xl">
-                                {format(agendamento.data_hora, "dd", { locale: ptBR })}
+                                {format(date, "dd", { locale: ptBR })}
                             </p>
                             <p className="text-sm">
-                                {format(agendamento.data_hora, "HH:mm", { locale: ptBR })}
+                                {format(date, "HH:mm", { locale: ptBR })}
                             </p>
                         </div>
                     </CardContent>
@@ -115,41 +116,19 @@ const AgendamentoItem = ({ agendamento }: AgendamentoItemProps) => {
                </div>
                <div className='mt-6 w-[90%] align-items-center mx-auto rounded-xl'>
                     <Badge className='w-fit' variant={confirmado ? 'default' : 'secondary'}>{confirmado ? 'Confirmado' : 'Finalizado'}</Badge>
+                    <div className="mt-3 mb-6">
 
-                    <Card className="mt-3 mb-6 ">
-                        <CardContent className="p-3 space-y-3">
-                            <div className="div flex justify-between items-center">
-                                <h2 className="font-bold"> {agendamento.servico_nome}</h2>
-                                <p className="text-sm font-bold">
-                                    {Intl.NumberFormat('pt-BR', { 
-                                        style: 'currency', 
-                                        currency: 'BRL' }).format(agendamento.servico_preco || 0)}
-                                </p>
-                            </div>
-
-                            <div className="div flex justify-between items-center">
-                                <h2 className="text-sm text-gray-400">Data</h2>
-                                <p className="text-sm">
-                                    {format(agendamento.data_hora, "d 'de' MMMM", { locale: ptBR })}
-                                </p>
-                            </div>
-
-                            <div className="div flex justify-between items-center">
-                                <h2 className="text-sm text-gray-400">Horário</h2>
-                                <p className="text-sm">
-                                    {format(agendamento.data_hora, "HH:mm", { locale: ptBR })}
-                                </p>
-                            </div>
-
-                            <div className="div flex justify-between items-center">
-                                <h2 className="text-sm text-gray-400">Barbearia: </h2>
-                                <p className="text-sm">
-                                    {agendamento.barbearia_nome}
-                                </p>
-                            </div>
-                        </CardContent>
-                    </Card>
-
+                        <ResumoAgendamento
+                            servico={{
+                                nome: agendamento.servico_nome,
+                                preco: agendamento.servico_preco,
+                                nomeBarbearia: agendamento.barbearia_nome,
+                            }}
+                            selectedDay={date}
+                            selectedTime={format(date, "HH:mm", { locale: ptBR })}
+                        />
+                    </div>
+                    <h2 className='font-bold mb-2'>Contato da barbearia:</h2>
                     <TelefoneItem telefone={agendamento.barbearia_telefone} />
                </div>
 
