@@ -62,12 +62,14 @@ const SideBar = () => {
 
                 {/* Conteúdo do menu */}
                 <div className="flex flex-col gap-2 mt-4 py-5 border-b border-solid ">
-                    
-                    <SheetClose asChild>
+
+                    <SheetClose asChild className="p-4">
                         <Button variant="ghost" size="lg" className="w-full gap-2 justify-start" >
                             <Link href="/">
-                                <HomeIcon size={18} />
-                                Inicio
+                                <div className="flex items-center gap-2">
+                                    <HomeIcon size={18} /> 
+                                    Início
+                                </div>
                             </Link>
                         </Button>
                     </SheetClose>
