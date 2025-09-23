@@ -45,7 +45,7 @@ const SideBar = () => {
                             </div>
                         </div>
                 ) : (
-                    <> 
+                    <>
                         <h2 className="font-bold ">Olá, faça o seu login!</h2>
                         <Dialog>
                             <DialogTrigger asChild>
