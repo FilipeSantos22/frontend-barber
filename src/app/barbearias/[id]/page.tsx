@@ -74,6 +74,11 @@ const BarbeariaPage = async (props: BarbeariaPageProps) => {
                    <StarIcon className="text-primary fill-primary" size={18}/>
                    <p className="text-sm text-gray-500 gap-2">5,0 (222 avaliações)</p>
                 </div>
+                {/* <div className="pt-3">
+                    <Link href={`/barbearias/${barbearia.idBarbearia}/cadastrar-barbeiro`}>
+                        <Button>Cadastrar Barbeiro</Button>
+                    </Link>
+                </div> */}
             </div>
 
             {/*DESCRIÇÃO*/}

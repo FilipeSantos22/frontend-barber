@@ -1,5 +1,6 @@
 export type Barbearia = {
   id: number;
+//   idBarbearia?: number;
   nome: string;
   imagem_url: string;
   endereco?: string;
