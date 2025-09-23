@@ -5,7 +5,7 @@ import { Calendar } from "./ui/calendar";
 import { Card, CardContent } from "./ui/card";
 import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle } from "./ui/sheet";
 import { ptBR } from "date-fns/locale";
-import { format, set } from "date-fns";
+import { set } from "date-fns";
 import { Servico } from "../../types/Servico";
 import { toast } from "sonner";
 import { criarAgendamento } from "../_actions/criar-agendamento";
