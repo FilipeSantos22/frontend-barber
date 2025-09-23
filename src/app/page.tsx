@@ -17,7 +17,9 @@ import { ptBR } from 'date-fns/locale';
 const Home = async () => {
     const session = await getServerSession(authOptions);
     const barbeariasPopulares = session?.user ? await getBarbearias() : [];
-    const agendamentos = session?.user ? await getAgendamentoById((session?.user as any).id) : [];
+    // const agendamentos = session?.user ? await getAgendamentoById((session?.user as any).id) : [];
+    const agendamentosRaw = session?.user ? await getAgendamentoById((session?.user as any).id) : [];
+    const agendamentos = Array.isArray(agendamentosRaw) ? agendamentosRaw : [];
     const agendamentosConfirmados = agendamentos
         .filter(
             (agendamento: any) =>
