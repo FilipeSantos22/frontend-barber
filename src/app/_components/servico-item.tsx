@@ -14,6 +14,7 @@ import { getAgendamentos } from "../_actions/get-agendamentos";
 import { Dialog, DialogContent } from "./ui/dialog";
 import SignInDialog from "./sign-in-dialog";
 import ResumoAgendamento from "./resumo-agendamendo";
+import { useRouter } from "next/navigation";
 
 
 interface ServicoItemProps {
@@ -22,6 +23,7 @@ interface ServicoItemProps {
 
 const ServicoItem = ({ servico }: ServicoItemProps) => {
 
+    const router = useRouter();
     const [signInDialogIsOpen, setSignInDialogIsOpen] = useState(false);
     const { data } = useSession();
     const preco = servico.preco !== null && servico.preco !== undefined
@@ -94,7 +96,14 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
                 descricao: servico.nome,
             });
             handleSheetOpenChange();
-            toast.success("Agendamento criado com sucesso!");
+            toast.success("Agendamento criado com sucesso!", {
+                action: {
+                    label: 'Ver agendamentos',
+                    onClick: () => {
+                        router.push('/agendamentos');
+                    }
+                }
+            });
         } catch (error) {
             console.error("Erro ao criar agendamento:", error);
             toast.error("Erro ao criar agendamento. Por favor, tente novamente.");
