@@ -64,17 +64,21 @@ const Home = async () => {
 
                 {/* IMAGEM */}
                 <div className='relative w-full h-[150px] mt-6'>
-                    <Image src="/Banner01.png" alt="Agende conosco" fill className='object-cover rounded-xl' />
+                    <Image src="/Banner01.png" alt="Agende conosco" fill className='rounded-xl' />
                 </div>
 
                 {/* AGENDAMENTOS */}
                 {/* TODO: separar agendamentos em confirmados e finalizados NO BANCO DE DADOS TAMBÉM */}
-                <h1 className='mt-6 mb-3 text-xl font-bold '>Agendamentos:</h1>
-                <div className="flex gap-3 overflow-x-auto [&::-webkit-scrollbar]:hidden">
-                    {agendamentosConfirmados.map((agendamento: any, idx: any) => (
-                        <AgendamentoItem agendamento={agendamento} key={`${agendamento.id}-${idx}`} />
-                    ))}
-                </div>
+                {agendamentosConfirmados.length > 0 && (
+                    <>
+                        <h1 className='mt-6 mb-3 text-xl font-bold '>Agendamentos:</h1>
+                        <div className="flex gap-3 overflow-x-auto [&::-webkit-scrollbar]:hidden">
+                            {agendamentosConfirmados.map((agendamento: any, idx: any) => (
+                                <AgendamentoItem agendamento={agendamento} key={`${agendamento.id}-${idx}`} />
+                            ))}
+                        </div>
+                    </>
+                )}
 
                 {/* RECOMENDADOS */}
                 <h2 className='mt-6 mb-3 text-xl font-bold '>Recomendados:</h2>
