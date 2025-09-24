@@ -24,6 +24,7 @@ const BarbeariaItem = ({ barbearia }: BarbeariaItemProps) => {
       <CardContent className="p-0 px-2 ">
         <div className='relative h-[159px] w-full'>
             <Image fill
+              sizes="(max-width: 600px) 100vw, 167px"
               src={barbearia.imagem_url}
               alt={barbearia.nome}
               className="object-cover rounded-2xl"
