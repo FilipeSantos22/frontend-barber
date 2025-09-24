@@ -12,6 +12,6 @@ export async function createAgendamento(payload: any) {
 }
 
 export async function getAgendamentoById(id: number) {
-    const { data } = await api.get(`/agendamentos/${id}`);
+    const { data } = await api.get(`/agendamentos/usuario/${id}`);
     return data;
 }
