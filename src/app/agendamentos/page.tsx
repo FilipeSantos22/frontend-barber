@@ -5,6 +5,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../_lib/auth";
 import AgendamentoItem from "../_components/agendamento-item";
 import { isFuture } from "date-fns";
+import { getBarbearias } from "@/services/barbearia";
+import { getServicos } from "@/services/servico";
+import { mergeAgendamentoBarbeariaServico } from "../_utils/mergeAgendamentos";
 
 const Agendamentos = async () => {
     const session = await getServerSession(authOptions);
@@ -16,13 +19,22 @@ const Agendamentos = async () => {
         );
     }
 
-    const agendamentos = await getAgendamentoById((session?.user as any).id) ?? [];
+    const barbearias = await getBarbearias();
+    const servicos = await getServicos();
+    const agendamentosRaw = await getAgendamentoById((session.user as any).id);
+    const agendamentos = Array.isArray(agendamentosRaw) ? agendamentosRaw : [];
 
-    const confirmados = agendamentos.filter(
+    const { agendamentosComBarbeariaEServico } = mergeAgendamentoBarbeariaServico(
+        agendamentos,
+        barbearias,
+        servicos
+    );
+
+    const confirmados = agendamentosComBarbeariaEServico.filter(
         (agendamento: any) =>
             isFuture(new Date(agendamento.data_hora)) && agendamento.status !== 'cancelado'
     );
-    const finalizados = agendamentos.filter(
+    const finalizados = agendamentosComBarbeariaEServico.filter(
         (agendamento: any) =>
             !isFuture(new Date(agendamento.data_hora)) || agendamento.status === 'cancelado'
     );
@@ -60,5 +72,5 @@ const Agendamentos = async () => {
         </>
     );
 }
- 
+
 export default Agendamentos;

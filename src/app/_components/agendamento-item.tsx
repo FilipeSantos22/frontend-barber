@@ -23,13 +23,20 @@ interface Agendamento {
     data_hora: string;
     status: string;
     descricao: string;
-    barbearia_imagem_url: string;
-    barbearia_endereco: string;
-    barbearia_telefone: string;
-    barbearia_nome: string;
-    servico_preco: number;
-    servico_duracao_minutos: number;
-    servico_nome: string;
+    barbearia: {
+        idBarbearia: number;
+        nome: string;
+        endereco: string;
+        telefone?: string;
+        imagem_url: string;
+    }
+    servico: {
+        idServico: number;
+        nome: string;
+        descricao: string;
+        preco: number;
+        duracao_minutos: number;
+    }
 }
 interface AgendamentoItemProps {
   agendamento: Agendamento;
@@ -63,14 +70,14 @@ const AgendamentoItem = ({ agendamento }: AgendamentoItemProps) => {
                         <div className='flex flex-col gap-2 py-5 pl-5'>
 
                             <Badge className='w-fit' variant={confirmado ? 'default' : 'secondary'}>{confirmado ? 'Confirmado' : 'Finalizado'}</Badge>
-                            <h3 className='semi-bold'>{agendamento.servico_nome}</h3>
+                            <h3 className='w-fit'>{agendamento.servico.nome}</h3>
 
                             <div className='flex items-center gap-2'>
                                 <Avatar className='w-6 h-6'>
-                                    <AvatarImage src={agendamento.barbearia_imagem_url}></AvatarImage>
+                                    <AvatarImage src={agendamento.barbearia.imagem_url}></AvatarImage>
                                 </Avatar>
 
-                                <p className='text-sm'>{agendamento.barbearia_nome}</p>
+                                <p className='text-sm'>{agendamento.barbearia.nome}</p>
                             </div>
 
                         </div>
@@ -99,17 +106,17 @@ const AgendamentoItem = ({ agendamento }: AgendamentoItemProps) => {
                     <Image 
                         className='object-cover w-full h-full'   
                         src="/Barbearia-Card.png" 
-                        alt={agendamento.barbearia_nome} 
+                        alt={agendamento.barbearia.nome} 
                         fill
                     />
                     <Card className='z-50 w-full mb-3 mx-5 rounded-xl'>
                         <CardContent className='px-5 py-3 flex gap-3 items-center'>
                             <Avatar>
-                                <AvatarImage src={agendamento.barbearia_imagem_url}></AvatarImage>
+                                <AvatarImage src={agendamento.barbearia.imagem_url}></AvatarImage>
                             </Avatar>
                             <div>
-                                <h3 className='font-bold'>{agendamento.barbearia_nome}</h3>
-                                <h3 className='text-xs'>{agendamento.barbearia_endereco}</h3>
+                                <h3 className='font-bold'>{agendamento.barbearia.nome}</h3>
+                                <h3 className='text-xs'>{agendamento.barbearia.endereco}</h3>
                             </div>
                         </CardContent>
                     </Card>
@@ -120,16 +127,16 @@ const AgendamentoItem = ({ agendamento }: AgendamentoItemProps) => {
 
                         <ResumoAgendamento
                             servico={{
-                                nome: agendamento.servico_nome,
-                                preco: agendamento.servico_preco,
-                                nomeBarbearia: agendamento.barbearia_nome,
+                                nome: agendamento.servico.nome,
+                                preco: agendamento.servico.preco,
+                                nomeBarbearia: agendamento.barbearia.nome,
                             }}
                             selectedDay={date}
                             selectedTime={format(date, "HH:mm", { locale: ptBR })}
                         />
                     </div>
                     <h2 className='font-bold mb-2'>Contato da barbearia:</h2>
-                    <TelefoneItem telefone={agendamento.barbearia_telefone} />
+                    <TelefoneItem telefone={agendamento.barbearia.telefone ? agendamento.barbearia.telefone : ''} />
                </div>
 
               <SheetFooter className='mt-6'>

@@ -13,22 +13,18 @@ import { getAgendamentoById } from '@/services/agendamentos';
 import { isFuture } from 'date-fns';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { getServicos } from '@/services/servico';
+import { mergeAgendamentoBarbeariaServico } from "@/app/_utils/mergeAgendamentos";
+
 
 const Home = async () => {
     const session = await getServerSession(authOptions);
-    const barbeariasPopulares = session?.user ? await getBarbearias() : [];
-    // const agendamentos = session?.user ? await getAgendamentoById((session?.user as any).id) : [];
-    const agendamentosRaw = session?.user ? await getAgendamentoById((session?.user as any).id) : [];
+    
+    const barbearias = await getBarbearias();
+    const servicos = await getServicos();
+    const agendamentosRaw = session?.user ? await getAgendamentoById((session.user as any).id) : [];
     const agendamentos = Array.isArray(agendamentosRaw) ? agendamentosRaw : [];
-    const agendamentosConfirmados = agendamentos
-        .filter(
-            (agendamento: any) =>
-                isFuture(new Date(agendamento.data_hora)) && agendamento.status !== 'cancelado'
-        )
-        .sort(
-            (a: any, b: any) =>
-                new Date(a.data_hora).getTime() - new Date(b.data_hora).getTime()
-        );
+    const { agendamentosConfirmados } = mergeAgendamentoBarbeariaServico(agendamentos, barbearias, servicos);
 
     return (
 
@@ -85,7 +81,7 @@ const Home = async () => {
                 {/* RECOMENDADOS */}
                 <h2 className='mt-6 mb-3 text-xl font-bold '>Recomendados:</h2>
                 <div className='flex gap-4 overflow-auto [&::-webkit-scrollbar]:hidden mt-4'>
-                    {barbeariasPopulares.map((b: any) => (
+                    {barbearias.map((b: any) => (
                         <BarbeariaItem key={b.idBarbearia} barbearia={b} />
                     ))}
                 </div>
