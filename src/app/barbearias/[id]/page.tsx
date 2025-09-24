@@ -9,12 +9,25 @@ import { ChevronLeftIcon, MapPinIcon, MenuIcon, StarIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/_lib/auth";
+import { getUserById } from "@/services/usuarios";
 
 type BarbeariaPageProps = {
   params: Promise<{ id: string }>;
 };
 
 const BarbeariaPage = async (props: BarbeariaPageProps) => {
+    const session = await getServerSession(authOptions);
+
+    let usuario = null;
+    if (session?.user) {
+        const userId = (session.user as any)?.id;
+        if (userId) {
+            usuario = await getUserById(Number(userId));
+        }
+    }
+
     const awaitedParams = await props.params;
     let barbearia: Barbearia | null = null;
     let servicosBarbearia = null;
@@ -74,11 +87,14 @@ const BarbeariaPage = async (props: BarbeariaPageProps) => {
                    <StarIcon className="text-primary fill-primary" size={18}/>
                    <p className="text-sm text-gray-500 gap-2">5,0 (222 avaliações)</p>
                 </div>
-                {/* <div className="pt-3">
-                    <Link href={`/barbearias/${barbearia.idBarbearia}/cadastrar-barbeiro`}>
-                        <Button>Cadastrar Barbeiro</Button>
-                    </Link>
-                </div> */}
+                {usuario && usuario.tipo === 'admin' && (
+                    <div className="pt-3">
+                        <Link href={`/barbearias/${barbearia.idBarbearia}/cadastrar-barbeiro`}>
+                            <Button>Cadastrar Barbeiro</Button>
+                        </Link>
+                    </div>
+                )}
+
             </div>
 
             {/*DESCRIÇÃO*/}
