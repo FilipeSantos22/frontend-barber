@@ -4,7 +4,7 @@ import { useRouter, useParams } from "next/navigation";
 import { Card, CardContent } from "@/app/_components/ui/card";
 import { Button } from "@/app/_components/ui/button";
 import Header from "@/app/_components/header";
-import { criarUsuario } from "@/services/usuarios";
+import { criarBarbeiro } from "@/services/usuarios";
 
 
 
@@ -34,7 +34,7 @@ const CadastrarBarbeiro = () => {
     setErro("");
     startTransition(async () => {
       try {
-        await criarUsuario(form);
+        await criarBarbeiro(form);
         router.back();
       } catch (err: any) {
         setErro(err.message || "Erro desconhecido");

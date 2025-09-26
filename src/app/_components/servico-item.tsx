@@ -15,6 +15,8 @@ import { Dialog, DialogContent } from "./ui/dialog";
 import SignInDialog from "./sign-in-dialog";
 import ResumoAgendamento from "./resumo-agendamendo";
 import { useRouter } from "next/navigation";
+import PreencherDadosDialog from "./preencher-dados-dialog";
+import { useUsuarioCompleto } from "../_actions/get-dados-usuario";
 
 
 interface ServicoItemProps {
@@ -25,7 +27,9 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
 
     const router = useRouter();
     const [signInDialogIsOpen, setSignInDialogIsOpen] = useState(false);
+    const [preencherDadosIsOpen, setPreencherDadosIsOpen] = useState(false);
     const { data } = useSession();
+    const usuarioCompleto = useUsuarioCompleto();
     const preco = servico.preco !== null && servico.preco !== undefined
         ? Number(servico.preco).toFixed(2)
         : null;
@@ -52,10 +56,15 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
     }, [servico.idBarbearia, servico.idServico, selectedDay]);
 
     const handleBookingClick = () => { 
-        if (!data?.user) {
+        if (!usuarioCompleto) {
             return setSignInDialogIsOpen(true);
         }
-        return setBookingSheetIsOpen(true);
+        // Verifica se falta nome ou telefone
+        if (!usuarioCompleto.name || !usuarioCompleto.telefone) {
+            setPreencherDadosIsOpen(true);
+            return;
+        }
+        setBookingSheetIsOpen(true);
     }
 
     const handleSheetOpenChange = () => {
@@ -110,6 +119,12 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
         }
 
     }
+
+    const handleDadosPreenchidos = () => {
+        setPreencherDadosIsOpen(false);
+        setBookingSheetIsOpen(true);
+    };
+
     return (
         <>
             <Card className="p-4 mb-3">
@@ -214,9 +229,22 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
             </Card>
 
 
-            <Dialog open={signInDialogIsOpen} onOpenChange={(open) => setSignInDialogIsOpen(open)}>
+            <Dialog open={signInDialogIsOpen} onOpenChange={setSignInDialogIsOpen}>
                 <DialogContent className="w-[90%]">
                     <SignInDialog />
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={preencherDadosIsOpen} onOpenChange={setPreencherDadosIsOpen}>
+                <DialogContent className="w-[90%]">
+                    <PreencherDadosDialog
+                        id={usuarioCompleto?.id}
+                        nomeAtual={usuarioCompleto?.name ?? ""}
+                        telefoneAtual={usuarioCompleto?.telefone ?? ""}
+                        emailAtual={data?.user?.email ?? ""}
+                        onClose={() => setPreencherDadosIsOpen(false)}
+                        onSuccess={handleDadosPreenchidos}
+                    />
                 </DialogContent>
             </Dialog>
         </>

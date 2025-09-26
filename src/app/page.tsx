@@ -10,7 +10,6 @@ import Link from 'next/link';
 import { getServerSession } from 'next-auth';
 import { authOptions } from './_lib/auth';
 import { getAgendamentoById } from '@/services/agendamentos';
-import { isFuture } from 'date-fns';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { getServicos } from '@/services/servico';
