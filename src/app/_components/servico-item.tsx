@@ -8,9 +8,8 @@ import { ptBR } from "date-fns/locale";
 import { set } from "date-fns";
 import { Servico } from "../../types/Servico";
 import { toast } from "sonner";
-import { criarAgendamento } from "../_actions/criar-agendamento";
 import { useSession } from "next-auth/react";
-import { getAgendamentos } from "../_actions/agendamentos";
+import { getAgendamentos, criarAgendamento } from "../_actions/agendamentos";
 import { Dialog, DialogContent } from "./ui/dialog";
 import SignInDialog from "./sign-in-dialog";
 import ResumoAgendamento from "./resumo-agendamendo";
@@ -50,7 +49,6 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
         
         const params = {
             idBarbearia: servico.idBarbearia,
-            idServico: servico.idServico,
             data_hora: selectedDay,
             idBarbeiro: barbeiroSelecionado
         };
@@ -59,7 +57,7 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
             setDiaAgendamento(agendamentos ?? []);
         }
         fetch();
-    }, [servico.idBarbearia, servico.idServico, selectedDay]);
+    }, [servico.idBarbearia, selectedDay]);
 
     useEffect(() => {
         async function fetchBarbeiros() {
@@ -123,6 +121,7 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
                 idBarbearia: servico.idBarbearia,
                 idBarbeiro: barbeiroSelecionado,
                 data_hora: novaData,
+                duracao_minutos: servico.duracao_minutos ? servico.duracao_minutos : null,
                 descricao: servico.nome,
             });
             handleSheetOpenChange();
@@ -150,7 +149,6 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
         if (!selectedDay || !barbeiroSelecionado) return;
         const params = {
             idBarbearia: servico.idBarbearia,
-            idServico: servico.idServico,
             data_hora: selectedDay,
             idBarbeiro: barbeiroSelecionado
         };
@@ -159,7 +157,7 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
             setDiaAgendamento(agendamentos ?? []);
         }
         fetch();
-    }, [servico.idBarbearia, servico.idServico, selectedDay, barbeiroSelecionado]);
+    }, [servico.idBarbearia, selectedDay, barbeiroSelecionado]);
 
     return (
         <>

@@ -19,6 +19,36 @@ const Agendamentos = async () => {
         );
     }
 
+
+    function filtrarAgendamentosUnicos(agendamentos: any[]) {
+        const vistos = new Set();
+        return agendamentos.filter((agendamento) => {
+            // Cria uma chave única para cada serviço agendado pelo usuário no mesmo dia
+            const chave = `${agendamento.idServico}-${agendamento.idBarbeiro}-${agendamento.idBarbearia}-${agendamento.data_hora}`;
+            if (vistos.has(chave)) {
+                return false;
+            }
+
+            // Só considera o primeiro horário (o menor) para cada serviço
+            const mesmoServico = agendamentos.filter(a =>
+                a.idServico === agendamento.idServico &&
+                a.idBarbeiro === agendamento.idBarbeiro &&
+                a.idBarbearia === agendamento.idBarbearia &&
+                a.status === agendamento.status &&
+                new Date(a.data_hora).toDateString() === new Date(agendamento.data_hora).toDateString()
+            );
+
+            const menorHorario = mesmoServico.reduce((menor, atual) =>
+                new Date(atual.data_hora) < new Date(menor.data_hora) ? atual : menor
+            , agendamento);
+
+            const chaveMenor = `${menorHorario.idServico}-${menorHorario.idBarbeiro}-${menorHorario.idBarbearia}-${menorHorario.data_hora}`;
+            vistos.add(chaveMenor);
+
+            return agendamento === menorHorario;
+        });
+    }
+
     const barbearias = await getBarbearias();
     const servicos = await getServicos();
     const agendamentosRaw = await getAgendamentoByIdUsuario((session.user as any).id);
@@ -49,7 +79,7 @@ const Agendamentos = async () => {
                     {confirmados.length > 0 && (
                         <>
                             <h2 className='mt-6 mb-3 text-xs font-bold uppercase text-gray-400'>Confirmados:</h2>
-                            {confirmados.map((agendamento: any, idx: number) => (
+                            {filtrarAgendamentosUnicos(confirmados).map((agendamento: any, idx: number) => (
                                 <AgendamentoItem agendamento={agendamento} key={`${agendamento.id}-${idx}`} />
                             ))}
                         </>
@@ -58,7 +88,7 @@ const Agendamentos = async () => {
                     {finalizados.length > 0 && (
                         <>
                             <h2 className='mt-6 mb-3 text-xs font-bold uppercase text-gray-400'>Finalizados:</h2>
-                            {finalizados.map((agendamento: any, idx: number) => (
+                            {filtrarAgendamentosUnicos(finalizados).map((agendamento: any, idx: number) => (
                                 <AgendamentoItem agendamento={agendamento} key={`${agendamento.id}-${idx}`} />
                             ))}
                         </>
