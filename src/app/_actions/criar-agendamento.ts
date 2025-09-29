@@ -6,7 +6,7 @@ import { authOptions } from "../_lib/auth";
 interface CriarAgendamentosParams {
     idServico: number;
     idBarbearia: number;
-    idBarbeiro: number;
+    idBarbeiro: number | null;
     data_hora: Date;
     descricao: string;
 }

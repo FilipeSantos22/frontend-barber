@@ -10,7 +10,7 @@ import { criarBarbeiro } from "@/services/usuarios";
 
 const CadastrarBarbeiro = () => {
     const params = useParams();
-    const idBarbearia = params.id;
+    const idBarbearia = Array.isArray(params.id) ? params.id[0] : params.id;
     const router = useRouter();
 
     const [form, setForm] = useState({
@@ -89,6 +89,14 @@ const CadastrarBarbeiro = () => {
                         {isPending ? "Cadastrando..." : "Cadastrar"}
                     </Button>
                 </form>
+                <Button
+                    type="button"
+                    className="mt-4 w-full"
+                    variant="secondary"
+                    onClick={() => router.push(`/barbearias/${idBarbearia}`)}
+                >
+                    Voltar
+                </Button>
             </CardContent>
         </Card>
         </div>

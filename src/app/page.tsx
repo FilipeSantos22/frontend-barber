@@ -9,7 +9,7 @@ import Search from './_components/search';
 import Link from 'next/link';
 import { getServerSession } from 'next-auth';
 import { authOptions } from './_lib/auth';
-import { getAgendamentoById } from '@/services/agendamentos';
+import { getAgendamentoByIdUsuario } from '@/app/_actions/agendamentos';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { getServicos } from '@/services/servico';
@@ -21,7 +21,7 @@ const Home = async () => {
     
     const barbearias = await getBarbearias();
     const servicos = await getServicos();
-    const agendamentosRaw = session?.user ? await getAgendamentoById((session.user as any).id) : [];
+    const agendamentosRaw = session?.user ? await getAgendamentoByIdUsuario((session.user as any).id) : [];
     const agendamentos = Array.isArray(agendamentosRaw) ? agendamentosRaw : [];
     const { agendamentosConfirmados } = mergeAgendamentoBarbeariaServico(agendamentos, barbearias, servicos);
 

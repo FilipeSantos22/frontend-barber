@@ -1,5 +1,5 @@
 // "use client"
-import { getAgendamentoById } from "@/services/agendamentos";
+import { getAgendamentoByIdUsuario } from "@/app/_actions/agendamentos";
 import Header from "../_components/header";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../_lib/auth";
@@ -21,7 +21,7 @@ const Agendamentos = async () => {
 
     const barbearias = await getBarbearias();
     const servicos = await getServicos();
-    const agendamentosRaw = await getAgendamentoById((session.user as any).id);
+    const agendamentosRaw = await getAgendamentoByIdUsuario((session.user as any).id);
     const agendamentos = Array.isArray(agendamentosRaw) ? agendamentosRaw : [];
 
     const { agendamentosComBarbeariaEServico } = mergeAgendamentoBarbeariaServico(

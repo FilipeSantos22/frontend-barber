@@ -10,13 +10,14 @@ import { Servico } from "../../types/Servico";
 import { toast } from "sonner";
 import { criarAgendamento } from "../_actions/criar-agendamento";
 import { useSession } from "next-auth/react";
-import { getAgendamentos } from "../_actions/get-agendamentos";
+import { getAgendamentos } from "../_actions/agendamentos";
 import { Dialog, DialogContent } from "./ui/dialog";
 import SignInDialog from "./sign-in-dialog";
 import ResumoAgendamento from "./resumo-agendamendo";
 import { useRouter } from "next/navigation";
 import PreencherDadosDialog from "./preencher-dados-dialog";
-import { useUsuarioCompleto } from "../_actions/get-dados-usuario";
+import { getUser, getUserById } from "@/services/usuarios";
+import BarbeiroSelector from "./barbeiro-selector";
 
 
 interface ServicoItemProps {
@@ -29,7 +30,6 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
     const [signInDialogIsOpen, setSignInDialogIsOpen] = useState(false);
     const [preencherDadosIsOpen, setPreencherDadosIsOpen] = useState(false);
     const { data } = useSession();
-    const usuarioCompleto = useUsuarioCompleto();
     const preco = servico.preco !== null && servico.preco !== undefined
         ? Number(servico.preco).toFixed(2)
         : null;
@@ -38,15 +38,21 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
     const [selectedTime, setSelectedTime] = useState<string | undefined>(undefined);
     const [diaAgendamento, setDiaAgendamento] = useState<{ horario: string }[]>([]);
     const [bookingSheetIsOpen, setBookingSheetIsOpen] = useState(false);
+    const [usuarioCompleto, setUsuarioCompleto] = useState<any>(null);
+    const [barbeiros, setBarbeiros] = useState<any[]>([]);
+    const [barbeiroSelecionado, setBarbeiroSelecionado] = useState<number | null>(null);
 
     useEffect(() => {
-        if (!selectedDay) return;
+        if (!selectedDay || !barbeiroSelecionado) {
+            setDiaAgendamento([]);
+            return;
+        }
         
         const params = {
             idBarbearia: servico.idBarbearia,
             idServico: servico.idServico,
             data_hora: selectedDay,
-            idBarbeiro: 1 // TODO: ajustar para o barbeiro selecionado
+            idBarbeiro: barbeiroSelecionado
         };
         const fetch = async () => {
             const agendamentos = await getAgendamentos(params);
@@ -55,12 +61,28 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
         fetch();
     }, [servico.idBarbearia, servico.idServico, selectedDay]);
 
-    const handleBookingClick = () => { 
-        if (!usuarioCompleto) {
+    useEffect(() => {
+        async function fetchBarbeiros() {
+            // Busca todos os barbeiros da barbearia
+            const todosUsuarios = await getUser();
+            const barbeirosDaBarbearia = todosUsuarios.filter((u: any) => u.tipo === "barbeiro" && u.idBarbearia === servico.idBarbearia);
+            setBarbeiros(barbeirosDaBarbearia);
+        }
+        fetchBarbeiros();
+    }, [servico.idBarbearia]);
+
+    const handleBookingClick = async () => {
+        let usuario = null;
+        const id = (data?.user as any)?.id;
+        if (id) {
+            usuario = await getUserById(Number(id));
+        }
+        setUsuarioCompleto(usuario);
+        if (!usuario) {
             return setSignInDialogIsOpen(true);
         }
         // Verifica se falta nome ou telefone
-        if (!usuarioCompleto.name || !usuarioCompleto.telefone) {
+        if (!usuario.name || !usuario.telefone) {
             setPreencherDadosIsOpen(true);
             return;
         }
@@ -96,11 +118,10 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
                 minutes: minutos,
                 hours: hora,
             })
-
             await criarAgendamento({
                 idServico: servico.idServico,
                 idBarbearia: servico.idBarbearia,
-                idBarbeiro: 1,// temporários -> aqui tem que pegar o barbeiro selecionado
+                idBarbeiro: barbeiroSelecionado,
                 data_hora: novaData,
                 descricao: servico.nome,
             });
@@ -124,6 +145,21 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
         setPreencherDadosIsOpen(false);
         setBookingSheetIsOpen(true);
     };
+
+    useEffect(() => {
+        if (!selectedDay || !barbeiroSelecionado) return;
+        const params = {
+            idBarbearia: servico.idBarbearia,
+            idServico: servico.idServico,
+            data_hora: selectedDay,
+            idBarbeiro: barbeiroSelecionado
+        };
+        const fetch = async () => {
+            const agendamentos = await getAgendamentos(params);
+            setDiaAgendamento(agendamentos ?? []);
+        }
+        fetch();
+    }, [servico.idBarbearia, servico.idServico, selectedDay, barbeiroSelecionado]);
 
     return (
         <>
@@ -149,7 +185,7 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
                                     Reservar
                                 </Button>
                                 
-                                <SheetContent>
+                                <SheetContent className="overflow-y-auto">
                                     <SheetHeader>
                                         <SheetTitle>Fazer Reserva</SheetTitle>
                                     </SheetHeader>
@@ -161,35 +197,20 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
                                             selected={selectedDay}
                                             onSelect={handleDateSelect}
                                             hidden={{ before: new Date() }}
-                                            styles={{
-                                                head_cell: {
-                                                    width: "10%",
-                                                    textTransform: "capitalize",
-                                                },
-                                                cell: {
-                                                    width: "10%",
-                                                },
-                                                button: {
-                                                    width: "10%",
-                                                },
-                                                nav_button_previous: {
-                                                    width: "32px",
-                                                    height: "32px",
-                                                },
-                                                nav_button_next: {
-                                                    width: "32px",
-                                                    height: "32px",
-                                                },
-                                                caption: {
-                                                    textTransform: "capitalize",
-                                                },
-                                            }} 
                                         />
                                         
                                     </div>
 
                                     {selectedDay && (
-                                        <div className="flex overflow-x-auto p-5 gap-3 [&::-webkit-scrollbar]:hidden border-b border-solid mb-5">
+                                        <BarbeiroSelector
+                                            barbeiros={barbeiros}
+                                            barbeiroSelecionado={barbeiroSelecionado}
+                                            onSelect={setBarbeiroSelecionado}
+                                        />
+                                    )}
+
+                                    {selectedDay && barbeiroSelecionado && (
+                                        <div className="flex items-center overflow-x-auto overflow-y-hidden p-5 gap-3 [&::-webkit-scrollbar]:hidden border-b border-solid mb-5 h-40">
                                             {(diaAgendamento ?? []).map((item: { horario: string }) => (
                                                 <Button
                                                     key={item.horario}
@@ -204,16 +225,17 @@ const ServicoItem = ({ servico }: ServicoItemProps) => {
                                     )}
 
                                     {selectedTime && selectedDay && (
-                                        <div className="p-5">
+                                        <div className="">
                                             <ResumoAgendamento
-                                                    servico={{
-                                                        nome: servico.nome,
-                                                        preco: servico.preco,
-                                                        nomeBarbearia: servico.nomeBarbearia,
-                                                    }}
-                                                    selectedDay={selectedDay}
-                                                    selectedTime={selectedTime.slice(0, 5)}
-                                                />
+                                                servico={{
+                                                    nome: servico.nome,
+                                                    preco: servico.preco,
+                                                    nomeBarbearia: servico.nomeBarbearia,
+                                                    nomeBarbeiro: barbeiros.find(b => b.id === barbeiroSelecionado)?.name ?? ""
+                                                }}
+                                                selectedDay={selectedDay}
+                                                selectedTime={selectedTime.slice(0, 5)}
+                                            />
                                         </div>
                                     )}
                                     <SheetFooter className="px-5 ">

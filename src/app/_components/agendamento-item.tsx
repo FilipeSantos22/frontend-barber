@@ -11,8 +11,9 @@ import { Button } from './ui/button';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { deleteAgendamento } from '../_actions/delete-agendamento';
 import { toast } from 'sonner';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ResumoAgendamento from './resumo-agendamendo';
+import { getUserById } from "@/services/usuarios";
 
 interface Agendamento {
     id: number; // id do user
@@ -46,6 +47,17 @@ const AgendamentoItem = ({ agendamento }: AgendamentoItemProps) => {
     const date = new Date(agendamento.data_hora);
     const confirmado = isFuture(date) && agendamento.status != 'cancelado';
     const [open, setOpen] = useState(false);
+    const [nomeBarbeiro, setNomeBarbeiro] = useState('');
+
+    useEffect(() => {
+        async function fetchNomeBarbeiro() {
+            if (agendamento.idBarbeiro) {
+                const nome = await getUserById(agendamento.idBarbeiro);
+                setNomeBarbeiro(nome?.name ?? '');
+            }
+        }
+        fetchNomeBarbeiro();
+    }, [agendamento.idBarbeiro]);
 
     const handleDeleteAgendamento = async () => {
         try {
@@ -130,6 +142,7 @@ const AgendamentoItem = ({ agendamento }: AgendamentoItemProps) => {
                                 nome: agendamento.servico.nome,
                                 preco: agendamento.servico.preco,
                                 nomeBarbearia: agendamento.barbearia.nome,
+                                nomeBarbeiro: nomeBarbeiro
                             }}
                             selectedDay={date}
                             selectedTime={format(date, "HH:mm", { locale: ptBR })}

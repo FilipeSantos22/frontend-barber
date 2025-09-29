@@ -17,31 +17,33 @@ type BarbeariaPageProps = {
   params: Promise<{ id: string }>;
 };
 
-const BarbeariaPage = async (props: BarbeariaPageProps) => {
-    const session = await getServerSession(authOptions);
-
+const fetchBarbeariaData = async (id: string, session: any) => {
     let usuario = null;
-    if (session?.user) {
-        const userId = (session.user as any)?.id;
-        if (userId) {
-            usuario = await getUserById(Number(userId));
-        }
-    }
-
-    const awaitedParams = await props.params;
     let barbearia: Barbearia | null = null;
-    let servicosBarbearia = null;
-    
+    let servicosBarbearia = [];
     try {
-        barbearia = await getBarbeariaById(Number(awaitedParams.id));
-        servicosBarbearia = await getServicosByBarbeariaId(Number(awaitedParams.id));
+        if (session?.user) {
+            const userId = (session.user as any)?.id;
+            if (userId) {
+                usuario = await getUserById(Number(userId));
+            }
+        }
+        barbearia = await getBarbeariaById(Number(id));
+        servicosBarbearia = await getServicosByBarbeariaId(Number(id));
         servicosBarbearia = servicosBarbearia.map((servico: any) => ({
-        ...servico,
-        nomeBarbearia: barbearia?.nome,
+            ...servico,
+            nomeBarbearia: barbearia?.nome,
         }));
     } catch (error) {
         // Se for 404, barbearia permanece null
     }
+    return { usuario, barbearia, servicosBarbearia };
+};
+
+const BarbeariaPage = async (props: BarbeariaPageProps) => {
+    const session = await getServerSession(authOptions);
+    const awaitedParams = await props.params;
+    const { usuario, barbearia, servicosBarbearia } = await fetchBarbeariaData(awaitedParams.id, session);
     if (!barbearia) {
         return notFound();
     }
@@ -87,23 +89,36 @@ const BarbeariaPage = async (props: BarbeariaPageProps) => {
                    <StarIcon className="text-primary fill-primary" size={18}/>
                    <p className="text-sm text-gray-500 gap-2">5,0 (222 avaliações)</p>
                 </div>
-                {usuario && usuario.tipo === 'admin' && (
-                    <div className="pt-3">
-                        <Link href={`/barbearias/${barbearia.idBarbearia}/cadastrar-barbeiro`}>
-                            <Button>Cadastrar Barbeiro</Button>
-                        </Link>
+                {/*DESCRIÇÃO*/}
+                <div className="pt-3 space-y-3">
+                    <h2 className="text-xs font-bold uppercase text-gray-400 ">Sobre nós</h2>
+                    <p className="text-sm text-gray-600 text-justify">
+                        {barbearia.descricao || 'Nenhuma descrição disponível.'}
+                    </p>
+                </div>
+
+            </div>
+
+            {usuario && usuario.tipo === 'admin' && (
+                    <div className="p-5 border-b border-solid space-y-3">
+                        <h2 className="text-xs font-bold uppercase text-gray-400 ">Gerenciar</h2>
+                        <div className="flex ml-auto">
+                            <div className="pr-2">
+                                <Link href={`/barbearias/${barbearia.idBarbearia}/cadastrar-barbeiro`}>
+                                        <Button variant="secondary">Novo Barbeiro</Button>
+                                </Link>
+                            </div>
+                            <div className="pl-2">
+                                <Link href={`/barbearias/${barbearia.idBarbearia}/cadastrar-servico`}>
+                                    <Button variant="secondary">Novo Serviço</Button>
+                                </Link>
+                            </div>
+                        </div>
                     </div>
+                    
                 )}
 
-            </div>
-
-            {/*DESCRIÇÃO*/}
-            <div className="p-5 border-b border-solid space-y-3">
-                <h2 className="text-xs font-bold uppercase text-gray-400 ">Sobre nós</h2>
-                <p className="text-sm text-gray-600 text-justify">
-                    {barbearia.descricao || 'Nenhuma descrição disponível.'}
-                </p>
-            </div>
+            
 
             {/*SERVIÇOS*/}
             <div className="p-5 space-y-3 border-b border-solid ">

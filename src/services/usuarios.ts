@@ -12,8 +12,8 @@ export async function getUserById(id: number) {
     return data;
 }
 
-export async function criarBarbeiro({ nome, email, telefone, idBarbearia }: { nome: string; email: string; telefone: string; idBarbearia: string }) {
-    const payload = { nome, email, telefone, idBarbearia };
+export async function criarBarbeiro({ name, email, telefone, idBarbearia, tipo }: { name: string; email: string; telefone: string; idBarbearia: string; tipo?: string }) {
+    const payload = { name, email, telefone, idBarbearia, tipo };
     const { data } = await api.post("/usuarios", payload);
     return data;
 }

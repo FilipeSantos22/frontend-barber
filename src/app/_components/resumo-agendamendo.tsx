@@ -8,6 +8,7 @@ interface ResumoAgendamentoProps {
         nome: string;
         preco: string | number | null | undefined;
         nomeBarbearia: string;
+        nomeBarbeiro?: string;
     };
     selectedDay: Date;
     selectedTime: string;
@@ -24,6 +25,13 @@ const ResumoAgendamento = ({ servico, selectedDay, selectedTime }: ResumoAgendam
                             {Intl.NumberFormat('pt-BR', { 
                                 style: 'currency', 
                                 currency: 'BRL' }).format(Number(servico.preco ?? 0))}
+                        </p>
+                    </div>
+
+                    <div className="div flex justify-between items-center">
+                        <h2 className="text-sm text-gray-400">Barbeiro</h2>
+                        <p className="text-sm">
+                            {servico.nomeBarbeiro || 'Escolha um barbeiro'}
                         </p>
                     </div>
 
