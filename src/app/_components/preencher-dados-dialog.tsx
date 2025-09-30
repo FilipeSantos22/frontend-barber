@@ -2,6 +2,7 @@ import { useState } from "react";
 import { DialogHeader, DialogTitle } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { atualizarDadosUsuario } from "@/services/usuarios";
+import { InputTelefone } from "./telefone-input";
 
 interface PreencherDadosDialogProps {
     id?: number;
@@ -43,13 +44,11 @@ const PreencherDadosDialog = ({ id, nomeAtual, telefoneAtual, emailAtual, onClos
                     required
                     className="w-full border rounded px-3 py-2"
                 />
-                <input
-                    type="tel"
-                    placeholder="Telefone"
+                <InputTelefone
                     value={telefone}
-                    onChange={e => setTelefone(e.target.value)}
-                    required
+                    onChange={setTelefone}
                     className="w-full border rounded px-3 py-2"
+                    placeholder={true}
                 />
             </div>
             <Button type="submit" className="mt-4 w-full" disabled={loading}>

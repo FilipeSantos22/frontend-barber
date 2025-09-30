@@ -1,10 +1,11 @@
 "use client";
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { Card, CardContent } from "@/app/_components/ui/card";
 import { Button } from "@/app/_components/ui/button";
 import Header from "@/app/_components/header";
 import { criarBarbeiro } from "@/services/usuarios";
+import { InputTelefone } from "@/app/_components/telefone-input";
 
 
 
@@ -12,13 +13,14 @@ const CadastrarBarbeiro = () => {
     const params = useParams();
     const idBarbearia = Array.isArray(params.id) ? params.id[0] : params.id;
     const router = useRouter();
+    const [telefone, setTelefone] = useState("");
 
     const [form, setForm] = useState({
         name: "",
         email: "",
         tipo: "barbeiro",
         emailVerified: null,
-        telefone: '',
+        telefone: telefone,
         idBarbearia: idBarbearia || '',
     });
 
@@ -41,6 +43,10 @@ const CadastrarBarbeiro = () => {
       }
     });
   };
+
+    useEffect(() => {
+        setForm((prev) => ({ ...prev, telefone }));
+    }, [telefone]);
 
   return (
     <>
@@ -74,13 +80,11 @@ const CadastrarBarbeiro = () => {
                     </div>
                     <div>
                         <label className="block text-sm font-medium mb-1">Telefone</label>
-                        <input
-                            type="text"
-                            name="telefone"
-                            value={form.telefone}
-                            onChange={handleChange}
-                            required
+                        <InputTelefone
+                            value={telefone}
+                            onChange={setTelefone}
                             className="w-full border rounded px-3 py-2"
+                            placeholder={false}
                         />
                     </div>
 
